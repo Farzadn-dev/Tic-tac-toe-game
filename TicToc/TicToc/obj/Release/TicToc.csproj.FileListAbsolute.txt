@@ -1,0 +1,8 @@
+E:\Farzad\project\WindowsApps\Fun Project\TicToc\TicToc\bin\Release\TicToc.exe.config
+E:\Farzad\project\WindowsApps\Fun Project\TicToc\TicToc\bin\Release\TicToc.exe
+E:\Farzad\project\WindowsApps\Fun Project\TicToc\TicToc\bin\Release\TicToc.pdb
+E:\Farzad\project\WindowsApps\Fun Project\TicToc\TicToc\obj\Release\TicToc.csproj.AssemblyReference.cache
+E:\Farzad\project\WindowsApps\Fun Project\TicToc\TicToc\obj\Release\TicToc.csproj.SuggestedBindingRedirects.cache
+E:\Farzad\project\WindowsApps\Fun Project\TicToc\TicToc\obj\Release\TicToc.csproj.CoreCompileInputs.cache
+E:\Farzad\project\WindowsApps\Fun Project\TicToc\TicToc\obj\Release\TicToc.exe
+E:\Farzad\project\WindowsApps\Fun Project\TicToc\TicToc\obj\Release\TicToc.pdb
