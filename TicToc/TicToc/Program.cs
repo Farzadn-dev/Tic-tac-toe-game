@@ -11,7 +11,17 @@ namespace TicToc
     {
         static void Main(string[] args)
         {
-            TicTocGame.Play();
+            while (true)
+            {
+                Console.WriteLine("Select Mode --> 1[PvP], 2[PvCPU] ");
+                short num = Convert.ToInt16(Console.ReadKey().KeyChar.ToString());
+                if (num == 1)
+                    TicTocGame.Play();
+                else if (num == 2)
+                    TicTocGame.AI_Play();
+                Console.Clear();
+            }
+
         }
     }
 }

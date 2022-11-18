@@ -8,9 +8,6 @@ namespace TicToc
 {
     public class TicTocGame
     {
-        //  b()e
-        //  e><e
-
         private static bool isPlaying = true;
 
         const int X = 32;
@@ -18,7 +15,7 @@ namespace TicToc
 
         const char H_Wall = '-';
         const char V_Wall = '|';
-        static Players HowPlay;
+        static Players WhoPlays;
 
         static char[,] bord = new char[Y, X];
 
@@ -78,7 +75,7 @@ namespace TicToc
 
             return false;
         }
-        public static bool isDraw(ref List<PlayerMove> playerMoves) => playerMoves.Count == 9 ? true : false;
+        public static bool isDraw(ref List<PlayerMove> playerMoves) => playerMoves.Count >= 9 ? true : false;
 
         public static void CreateBord(ref char[,] bord)
         {
@@ -102,16 +99,90 @@ namespace TicToc
             return rand.Next(0, 2) == 0 ? Players.X : Players.O;
         }
 
+        public static void AI_Play()
+        {
+            Console.Clear();
+            WhoPlays = Players.O;
+            SetBored(Y, X);
+            CreateBord(ref bord);
+
+            Console.WriteLine("Turn: " + WhoPlays.ToString());
+            Console.WriteLine("--------|\n");
+            ShowBord(ref bord);
+
+            List<PlayerMove> playerMoves = new List<PlayerMove>();
+            Players winer;
+
+            while (!CheckEnd(ref playerMoves, out winer))
+            {
+                var p = Input();
+                if (playerMoves.Any(m => m.MoveIndex == p.MoveIndex))
+                    continue;
+
+                playerMoves.Add(p);
+
+                var p2 = GetFreeRandomPlace(ref playerMoves);//AI move
+                playerMoves.Add(p2);
+
+                Console.Clear();
+                UpdateBord(ref bord, p.Player, p.MoveIndex);
+                UpdateBord(ref bord, p2.Player, p2.MoveIndex);
+
+                Console.WriteLine("Turn: " + WhoPlays.ToString());
+                Console.WriteLine("--------|\n");
+                ShowBord(ref bord);
+            }
+
+            Console.Clear();
+            if (winer == Players.Draw)
+            {
+                Console.WriteLine("Oops! game is Draw!");
+            }
+            else
+            {
+                Console.WriteLine("Congratulation Player " + winer.ToString() + "\nyou are Winer!!");
+            }
+            Console.WriteLine("Show Bord of \nbefor Game Press 'b'!");
+            Console.WriteLine("Press 'a' to Play Again!");
+            Console.WriteLine("and Press 'e' to Exit!");
+
+            char c = Console.ReadKey(true).KeyChar;
+            switch (c)
+            {
+                case 'b':
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Winer: " + winer.ToString());
+                        Console.WriteLine("--------|\n");
+                        ShowBord(ref bord);
+                        Console.WriteLine("Press 'a' to Play Again!");
+                        Console.WriteLine("and Press 'e' to Exit!");
+                        char cc = Console.ReadKey(true).KeyChar;
+                        if (cc == 'e')
+                            goto case 'e';
+
+                        break;
+                    }
+                case 'e':
+                    {
+                        isPlaying = false;
+                        break;
+                    }
+                default:
+                    break;
+            }
+        }
+
         public static void Play()
         {
             while (isPlaying)
             {
                 Console.Clear();
-                HowPlay = GetPlayerRandom();
+                WhoPlays = GetPlayerRandom();
                 SetBored(Y, X);
                 CreateBord(ref bord);
 
-                Console.WriteLine("Turn: " + HowPlay.ToString());
+                Console.WriteLine("Turn: " + WhoPlays.ToString());
                 Console.WriteLine("--------|\n");
                 ShowBord(ref bord);
 
@@ -128,9 +199,9 @@ namespace TicToc
                     Console.Clear();
                     UpdateBord(ref bord, p.Player, p.MoveIndex);
 
-                    HowPlay = p.Player == Players.X ? Players.O : Players.X;
+                    WhoPlays = p.Player == Players.X ? Players.O : Players.X;
 
-                    Console.WriteLine("Turn: " + HowPlay.ToString());
+                    Console.WriteLine("Turn: " + WhoPlays.ToString());
                     Console.WriteLine("--------|\n");
                     ShowBord(ref bord);
                 }
@@ -184,7 +255,7 @@ namespace TicToc
                 char c = Console.ReadKey(true).KeyChar;
                 if (c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7' || c == '8' || c == '9')
                 {
-                    move.Player = HowPlay;
+                    move.Player = WhoPlays;
                     move.MoveIndex = int.Parse(c.ToString());
                     break;
                 }
@@ -192,7 +263,7 @@ namespace TicToc
                 Console.WriteLine("Please just use these:\n1,2,3,4,5,6,7,8,9");
                 Thread.Sleep(3000);
                 Console.Clear();
-                Console.WriteLine("Turn: " + HowPlay.ToString());
+                Console.WriteLine("Turn: " + WhoPlays.ToString());
                 Console.WriteLine("--------|\n");
                 ShowBord(ref bord);
             }
@@ -250,15 +321,15 @@ namespace TicToc
                 bord[y, x] = '_';
                 bord[y, x + 1] = ')';
                 bord[y, x - 1] = '(';
-                bord[y, x - 2] = 'b';
-                bord[y, x + 2] = 'e';
+                bord[y, x - 2] = 'b';//blue color
+                bord[y, x + 2] = 'e';//end color
                 // (_)
             }
             else if (player == Players.X)
             {
                 bord[y, x] = 'X';
-                bord[y, x - 1] = 'r';
-                bord[y, x + 1] = 'e';
+                bord[y, x - 1] = 'r';//red color
+                bord[y, x + 1] = 'e';//end color
                 // X
             }
         }
@@ -327,5 +398,25 @@ namespace TicToc
                     break;
             }
         }
+
+        private static PlayerMove GetFreeRandomPlace(ref List<PlayerMove> moves)
+        {
+            if (moves.Count == 9)
+                return new PlayerMove();
+            PlayerMove p = new PlayerMove();
+            p.Player = WhoPlays == Players.X ? Players.O : Players.X;
+
+            Random r = new Random();
+            int index;
+
+            do
+            {
+               index = r.Next(1,10);
+            } while (moves.Any(c=>c.MoveIndex == index));
+
+            p.MoveIndex = index;
+            return p;
+        }
+
     }
 }
